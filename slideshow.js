@@ -18,18 +18,3 @@ function showSlides() {
   setTimeout(showSlides, 1000); // Change image every 1 second
 }
 
-<div class="slideshow-container">
-
-<div class="mySlides fade">
-  <div class="numbertext"></div>
-  <img src="image01.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext"></div>
-  <img src="image02.png" style="width:100%">
-  <div class="text"></div>
-</div>
-
-</div>
