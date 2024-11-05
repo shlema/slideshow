@@ -61,6 +61,11 @@ function renderPage(num) {
         });
     });
 }
+
+window.addEventListener('resize', () => {
+    renderPage(pageNum);
+});
+
     </script>
 </body>
 </html>
