@@ -1,32 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<meta http-equiv="refresh" content="600">
-<link link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous PDF Display</title>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <style>
+        #pdf-canvas {
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
 </head>
-
 <body>
+    <canvas id="pdf-canvas"></canvas>
+    <script>
+        // Set the URL to your hosted PDF file
+        const url = "https://s3.eu-west-1.amazonaws.com/tnw.events/spaces/uploads/narrowcasting/testpdf.pdf";
+        let pdfDoc = null;
+        let pageNum = 1;
+        let canvas = document.getElementById('pdf-canvas');
+        let ctx = canvas.getContext('2d');
 
-<div class="slideshow-container">
+        // Load the PDF document
+        pdfjsLib.getDocument(url).promise.then(doc => {
+            pdfDoc = doc;
+            renderPage(pageNum);
+        });
 
-<div class="mySlides fade">
-  <div class="numbertext"></div>
-  <img src="https://s3.eu-west-1.amazonaws.com/tnw.events/spaces/uploads/narrowcasting/image01.jpg" style="width:100%">
-  <div class="text"></div>
-</div>
-
-<div class="mySlides fade">
-  <div class="numbertext"></div>
-  <img src="https://s3.eu-west-1.amazonaws.com/tnw.events/spaces/uploads/narrowcasting/image02.jpg" style="width:100%">
-  <div class="text"></div>
-</div>
-
-</div>
-
-<script type="text/javascript" src="slideshow.js"></script>
-
+        function renderPage(num) {
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                }).promise.then(() => {
+                    setTimeout(() => {
+                        pageNum = (pageNum % pdfDoc.numPages) + 1;
+                        renderPage(pageNum);
+                    }, 2000);  // Change every 2 seconds
+                });
+            });
+        }
+    </script>
 </body>
-
-</html> 
+</html>
