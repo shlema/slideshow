@@ -35,11 +35,13 @@
         let canvas = document.getElementById('pdf-canvas');
         let ctx = canvas.getContext('2d');
 
-        // Load the PDF document
-        pdfjsLib.getDocument(url).promise.then(doc => {
-            pdfDoc = doc;
-            renderPage(pageNum);
-        });
+function loadPDF() {
+    pdfjsLib.getDocument(url).promise.then(doc => {
+        pdfDoc = doc;
+        pageNum = 1; // Reset to the first page each time
+        renderPage(pageNum);
+    });
+}
 
 function renderPage(num) {
     pdfDoc.getPage(num).then(page => {
@@ -61,6 +63,12 @@ function renderPage(num) {
         });
     });
 }
+
+// Load PDF initially
+loadPDF();
+
+// Reload the PDF every 30 minutes (1800000 milliseconds)
+setInterval(loadPDF, 1800000);
 
 window.addEventListener('resize', () => {
     renderPage(pageNum);
