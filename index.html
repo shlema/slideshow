@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continuous PDF Display</title>
+    <title>TNW City Events</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <style>
-        #pdf-canvas {
-            width: 100%;
-            max-width: 600px;
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f5f5f5; /* optional background */
         }
+
+        #pdf-canvas {
+            display: block;
+            max-width: 100vw;
+            max-height: 100vh;
+            margin: auto;
+}
     </style>
 </head>
 <body>
@@ -28,22 +41,26 @@
             renderPage(pageNum);
         });
 
-        function renderPage(num) {
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: 1.5 });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                page.render({
-                    canvasContext: ctx,
-                    viewport: viewport
-                }).promise.then(() => {
-                    setTimeout(() => {
-                        pageNum = (pageNum % pdfDoc.numPages) + 1;
-                        renderPage(pageNum);
-                    }, 2000);  // Change every 2 seconds
-                });
-            });
-        }
+function renderPage(num) {
+    pdfDoc.getPage(num).then(page => {
+        const viewport = page.getViewport({ scale: 1.0 }); // Start with scale 1.0
+        const scale = Math.min(window.innerWidth / viewport.width, window.innerHeight / viewport.height); // Calculate scale to fit
+
+        const scaledViewport = page.getViewport({ scale: scale });
+        canvas.height = scaledViewport.height;
+        canvas.width = scaledViewport.width;
+
+        page.render({
+            canvasContext: ctx,
+            viewport: scaledViewport
+        }).promise.then(() => {
+            setTimeout(() => {
+                pageNum = (pageNum % pdfDoc.numPages) + 1;
+                renderPage(pageNum);
+            }, 2000);  // Adjust timing as needed
+        });
+    });
+}
     </script>
 </body>
 </html>
